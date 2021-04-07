@@ -1,6 +1,6 @@
-# cmake-project-template
+# Slime
 
-Uses CMake for generating a basic project template.
+![Windows](https://github.com/Husenap/slime/workflows/Windows/badge.svg)
+![Ubuntu](https://github.com/Husenap/slime/workflows/Ubuntu/badge.svg)
 
-![Windows](https://github.com/Husenap/cmake-project-template/workflows/Windows/badge.svg)
-![Ubuntu](https://github.com/Husenap/cmake-project-template/workflows/Ubuntu/badge.svg)
+OpenGL Compute Shader Simulation
