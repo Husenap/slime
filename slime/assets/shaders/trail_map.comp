@@ -1,0 +1,41 @@
+#version 460
+layout(local_size_x = 1, local_size_y = 1) in;
+
+struct Agent {
+	vec2  position;
+	float angle;
+	float _padding;
+};
+
+struct Parameters {
+	float movementSpeed;
+	float decaySpeed;
+	float rotationAngle;
+	float sensorAngle;
+	float sensorDistance;
+	int   sensorSize;
+	vec2  _padding;
+};
+
+layout(rgba32f, binding = 0) uniform image2D img_output;
+layout(std430, binding = 1) buffer AgentBlock {
+	Agent agents[];
+};
+layout(std140, binding = 2) uniform ParametersBlock {
+	Parameters parameters;
+};
+
+layout(location = 0) uniform float deltaTime;
+layout(location = 1) uniform vec2 size;
+
+void main() {
+	int   index = int(gl_GlobalInvocationID.x);
+	Agent agent = agents[index];
+
+	vec2 pixel_coords = agent.position;
+
+	imageStore(img_output, ivec2(pixel_coords), vec4(1.0, 1.0, 1.0, 1.0));
+
+	agents[index].position += vec2(cos(agent.angle), sin(agent.angle)) *
+	                          parameters.movementSpeed * deltaTime;
+}
