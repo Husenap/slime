@@ -8,7 +8,7 @@
 #include "slime/Shader.hpp"
 
 constexpr glm::ivec2 LATTICE_SIZE{512, 512};
-constexpr int        AGENT_COUNT = 512;
+constexpr int        AGENT_COUNT = 1 << 8;
 
 Slime::Slime()
     : dubu::opengl_app::AppBase(
@@ -61,7 +61,7 @@ void Slime::Init() {
 		glDispatchCompute(LATTICE_SIZE.x, LATTICE_SIZE.y, 1);
 	}
 
-	std::array<Agent, AGENT_COUNT> agents;
+	std::vector<Agent> agents(AGENT_COUNT);
 	for (auto& agent : agents) {
 		agent.position = glm::diskRand(100.f) + glm::vec2(LATTICE_SIZE) * 0.5f;
 		agent.angle    = glm::linearRand(0.f, glm::two_pi<float>());
