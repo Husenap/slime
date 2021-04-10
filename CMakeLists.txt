@@ -13,7 +13,6 @@ set(${PROJECT_NAME}_FOLDER
     CACHE STRING "The folder that ${PROJECT_NAME} projects will be placed in.")
 
 include("thirdparty/dubu_pack.cmake")
-include("thirdparty/dubu_window.cmake")
-add_subdirectory("thirdparty/glad")
+include("thirdparty/dubu_opengl_app.cmake")
 
 add_subdirectory("slime")
