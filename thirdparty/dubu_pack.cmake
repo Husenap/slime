@@ -4,7 +4,7 @@ include(FetchContent)
 FetchContent_Declare(
     dubu_pack
     GIT_REPOSITORY  https://github.com/Husenap/dubu-pack.git
-    GIT_TAG         v1.1
+    GIT_TAG         v1.2
 )
 
 set(dubu_pack_BUILD_TESTS OFF CACHE BOOL "" FORCE)
