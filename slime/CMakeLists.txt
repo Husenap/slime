@@ -1,11 +1,13 @@
 set(target_name "slime")
 
 set(src_precompiled
-    "src/slime/precompiled.h")
+    "src/slime/precompiled.hpp")
 
 set(src_slime
-    "src/slime/Shader.h"
-    "src/slime/ShaderProgram.h"
+    "src/slime/Shader.hpp"
+    "src/slime/ShaderProgram.hpp"
+    "src/slime/Slime.cpp"
+    "src/slime/Slime.hpp"
     "src/main.cpp")
 
 set(src_files
