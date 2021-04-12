@@ -59,7 +59,9 @@ float sense(in Agent agent, in float sensorAngleOffset) {
 		     offsetX <= parameters.sensorSize;
 		     ++offsetX) {
 			ivec2 offset = ivec2(offsetX, offsetY);
-			sum += imageLoad(trailMap, sensorPosition + offset).r;
+			sum += imageLoad(trailMap,
+			                 ivec2(mod(sensorPosition + offset + size, size)))
+			           .r;
 		}
 	}
 
@@ -89,6 +91,7 @@ void main() {
 	vec2 newPosition = agent.position;
 	newPosition += direction * parameters.movementSpeed * deltaTime;
 
+#if 0
 	if (newPosition.x < 0.0 || newPosition.x >= size.x || newPosition.y < 0.0 ||
 	    newPosition.y >= size.y) {
 		float random = random01(agent.position.y * size.x + agent.position.x);
@@ -99,6 +102,10 @@ void main() {
 	} else {
 		imageStore(trailMap, ivec2(newPosition), vec4(1.0, 1.0, 1.0, 1.0));
 	}
+#else
+	newPosition = mod(newPosition + size, size);
+	imageStore(trailMap, ivec2(newPosition), vec4(1.0, 1.0, 1.0, 1.0));
+#endif
 
 	agents[id].position = newPosition;
 }

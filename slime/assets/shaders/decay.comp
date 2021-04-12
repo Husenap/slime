@@ -28,7 +28,8 @@ void main() {
 	for (int offsetY = -1; offsetY <= 1; ++offsetY) {
 		for (int offsetX = -1; offsetX <= 1; ++offsetX) {
 			ivec2 offset = ivec2(offsetX, offsetY);
-			sum += imageLoad(trailMap, id + offset).rgb;
+			sum +=
+			    imageLoad(trailMap, ivec2(mod(id + offset + size, size))).rgb;
 		}
 	}
 	sum /= 9.0;

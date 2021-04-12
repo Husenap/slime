@@ -143,10 +143,9 @@ void Slime::Update() {
 
 		ImGui::DragFloat(
 		    "Movement Speed", &mParameters.movementSpeed, 0.1f, 0.f, 100.f);
+		ImGui::DragFloat("Decay Rate", &mParameters.decayRate, 0.1f, 0.f, 50.f);
 		ImGui::DragFloat(
-		    "Decay Rate", &mParameters.decayRate, 0.01f, 0.f, 50.f);
-		ImGui::DragFloat(
-		    "Diffuse Rate", &mParameters.diffuseRate, 0.01f, 0.f, 50.f);
+		    "Diffuse Rate", &mParameters.diffuseRate, 0.1f, 0.f, 50.f);
 		ImGui::SliderAngle(
 		    "Rotation Angle", &mParameters.rotationAngle, 0.f, 180.f);
 		ImGui::SliderAngle(
@@ -156,7 +155,7 @@ void Slime::Update() {
 		                 0.1f,
 		                 static_cast<float>(mParameters.sensorSize),
 		                 100.f);
-		ImGui::DragInt("Sensor Size", &mParameters.sensorSize, 0.1f, 1, 12);
+		ImGui::DragInt("Sensor Size", &mParameters.sensorSize, 0.1f, 1, 2);
 	}
 	ImGui::End();
 
@@ -175,8 +174,8 @@ GLuint Slime::CreateTrailMap() {
 	glGenTextures(1, &trailMap);
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, trailMap);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexImage2D(GL_TEXTURE_2D,

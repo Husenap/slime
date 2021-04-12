@@ -51,6 +51,6 @@ private:
 	GLuint* mTrailMap;
 	GLuint* mDiffusedTrailMap;
 
-	float      mSimulationSpeed = 0.0f;
+	float      mSimulationSpeed = 1.0f;
 	Parameters mParameters      = {};
 };
