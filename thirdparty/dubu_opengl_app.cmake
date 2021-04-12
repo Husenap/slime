@@ -4,7 +4,7 @@ include(FetchContent)
 FetchContent_Declare(
     dubu_opengl_app
     GIT_REPOSITORY  https://github.com/Husenap/dubu-opengl-app.git
-    GIT_TAG         v1.1
+    GIT_TAG         v1.2
 )
 
 set(dubu_opengl_app_BUILD_TESTS OFF CACHE BOOL "" FORCE)

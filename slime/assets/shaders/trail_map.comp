@@ -1,6 +1,8 @@
 #version 460
 layout(local_size_x = 1, local_size_y = 1) in;
 
+const float PI = 3.1415926535898;
+
 struct Agent {
 	vec2  position;
 	float angle;
@@ -9,15 +11,16 @@ struct Agent {
 
 struct Parameters {
 	float movementSpeed;
-	float decaySpeed;
+	float decayRate;
+	float diffuseRate;
 	float rotationAngle;
 	float sensorAngle;
 	float sensorDistance;
 	int   sensorSize;
-	vec2  _padding;
+	float _padding;
 };
 
-layout(rgba32f, binding = 0) uniform image2D img_output;
+layout(rgba32f, binding = 0) uniform image2D trailMap;
 layout(std430, binding = 1) buffer AgentBlock {
 	Agent agents[];
 };
@@ -26,16 +29,83 @@ layout(std140, binding = 2) uniform ParametersBlock {
 };
 
 layout(location = 0) uniform float deltaTime;
-layout(location = 1) uniform vec2 size;
+layout(location = 1) uniform ivec2 size;
+
+uint hash(in uint state) {
+	state ^= 2747636419u;
+	state *= 2654435769u;
+	state ^= state >> 16;
+	state *= 2654435769u;
+	state ^= state >> 16;
+	state *= 2654435769u;
+	return state;
+}
+
+float random01(in float state) {
+	return float(hash(uint(state))) / 4294967295.0;
+}
+
+float sense(in Agent agent, in float sensorAngleOffset) {
+	float sensorAngle     = agent.angle + sensorAngleOffset;
+	vec2  sensorDirection = vec2(cos(sensorAngle), sin(sensorAngle));
+
+	ivec2 sensorPosition =
+	    ivec2(agent.position + sensorDirection * parameters.sensorDistance);
+
+	float sum = 0.0;
+	for (int offsetY = -parameters.sensorSize; offsetY <= parameters.sensorSize;
+	     ++offsetY) {
+		for (int offsetX = -parameters.sensorSize;
+		     offsetX <= parameters.sensorSize;
+		     ++offsetX) {
+			ivec2 offset = ivec2(offsetX, offsetY);
+			sum += imageLoad(trailMap,
+			                 ivec2(mod(sensorPosition + offset + size, size)))
+			           .r;
+		}
+	}
+
+	return sum;
+}
 
 void main() {
-	int   index = int(gl_GlobalInvocationID.x);
-	Agent agent = agents[index];
+	int   id    = int(gl_GlobalInvocationID.x);
+	Agent agent = agents[id];
 
-	vec2 pixel_coords = agent.position;
+	float sensorForward = sense(agent, 0.0);
+	float sensorLeft    = sense(agent, -parameters.sensorAngle);
+	float sensorRight   = sense(agent, parameters.sensorAngle);
 
-	imageStore(img_output, ivec2(pixel_coords), vec4(1.0, 1.0, 1.0, 1.0));
+	if (sensorForward > sensorLeft && sensorForward > sensorRight) {
+	} else if (sensorForward < sensorLeft && sensorForward < sensorRight) {
+		float random = random01(agent.position.y * size.x + agent.position.x +
+		                        id + agent.angle);
+		agents[id].angle += (random * 2.0 - 1.0) * parameters.rotationAngle;
+	} else if (sensorLeft < sensorRight) {
+		agents[id].angle += parameters.rotationAngle;
+	} else if (sensorLeft > sensorRight) {
+		agents[id].angle -= parameters.rotationAngle;
+	}
 
-	agents[index].position += vec2(cos(agent.angle), sin(agent.angle)) *
-	                          parameters.movementSpeed * deltaTime;
+	vec2 direction   = vec2(cos(agent.angle), sin(agent.angle));
+	vec2 newPosition = agent.position;
+	newPosition += direction * parameters.movementSpeed * deltaTime;
+
+#if 0
+	if (newPosition.x < 0.0 || newPosition.x >= size.x || newPosition.y < 0.0 ||
+	    newPosition.y >= size.y) {
+		float random = random01(agent.position.y * size.x + agent.position.x);
+
+		newPosition.x = min(size.x - 1.0, max(0.0, newPosition.x));
+		newPosition.y = min(size.y - 1.0, max(0.0, newPosition.y));
+		agents[id].angle += (random + 0.5) * PI;
+	} else {
+		imageStore(trailMap, ivec2(newPosition), vec4(1.0, 1.0, 1.0, 1.0));
+	}
+#else
+	newPosition = mod(newPosition + size, size);
+	imageStore(trailMap, ivec2(newPosition), vec4(1.0, 1.0, 1.0, 1.0));
+#endif
+
+	agents[id].position = newPosition;
 }

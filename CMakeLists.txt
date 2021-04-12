@@ -8,6 +8,8 @@ include("cmake/standard_project_setup.cmake")
 include("cmake/compiler_features.cmake")
 include("cmake/compiler_warnings.cmake")
 
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/)
+
 set(${PROJECT_NAME}_FOLDER
     ${PROJECT_NAME}
     CACHE STRING "The folder that ${PROJECT_NAME} projects will be placed in.")
